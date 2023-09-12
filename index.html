@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MineSweepAR</title>
+    <meta name="description" content="MineSweepAR">
+    <script src="https://aframe.io/releases/1.4.0/aframe.js"></script>
+    <script>
+      AFRAME.registerComponent('handle-events', {
+        init: function () {
+                    var el = this.el;  // <a-box>
+          el.addEventListener('mouseenter', function () {
+            el.setAttribute('color', '#24CAFF');  
+          });
+          el.addEventListener('mouseleave', function () {
+            el.setAttribute('color', '#EF2D5E');  
+          });
+          el.addEventListener('click', function () {
+            el.setAttribute('scale', {x: 3, y: 1, z: 2});
+          });
+        } 
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene>
+      <a-camera><a-cursor></a-cursor></a-camera>
+      <a-assets>
+        <img id="groundTexture" src="https://cdn.aframe.io/a-painter/images/floor.jpg" crossorigin="anonymous">
+        <img id="skyTexture" src="https://cdn.aframe.io/a-painter/images/sky.jpg" crossorigin="anonymous">
+      </a-assets>
+
+      <!-- Primitives. -->
+      <a-box position="-1 0.6 -3" rotation="0 0 0" color="#4CC300" handle-events></a-box>
+      <a-box position="0 1.35 -5" s color="#EF2D5E" handle-events></a-box>
+      <a-box position="1 0.85 -3" radius="0.5" height="1.5" color="#FFC65D" handle-events></a-box>
+      
+      <!-- Background sky. -->
+      <a-sky height="2048" radius="30" src="#skyTexture" theta-length="90" width="2048"></a-sky>
+
+      <!-- Ground. -->
+      <a-circle src="#groundTexture" rotation="-90 0 0" radius="32"></a-circle>
+
+      
+    </a-scene>
+  </body>
+</html>
