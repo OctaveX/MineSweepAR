@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "aframe": "^1.4.2"
   }

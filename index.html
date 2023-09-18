@@ -5,35 +5,56 @@
     <title>MineSweepAR</title>
     <meta name="description" content="MineSweepAR">
     <script src="https://aframe.io/releases/1.4.0/aframe.js"></script>
-    <script>
-      AFRAME.registerComponent('handle-events', {
-        init: function () {
-                    var el = this.el;  // <a-box>
-          el.addEventListener('mouseenter', function () {
-            el.setAttribute('color', '#24CAFF');  
-          });
-          el.addEventListener('mouseleave', function () {
-            el.setAttribute('color', '#EF2D5E');  
-          });
-          el.addEventListener('click', function () {
-            el.setAttribute('scale', {x: 3, y: 1, z: 2});
-          });
-        } 
-      });
-    </script>
+    <script src="https://cdn.rawgit.com/elbobo/aframe-multisrc-component/b6d23310/dist/0.3/aframe-multisrc-component.js"></script>
+    <script type="module"  src="minesweeper.js"></script>
   </head>
   <body>
-    <a-scene>
-      <a-camera><a-cursor></a-cursor></a-camera>
+    <a-scene webxr="requiredFeatures: hit-test,local-floor;
+        optionalFeatures: dom-overlay,unbounded;
+        overlayElement: #overlay;"
+        inspector="url: https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js">
+        
+      <a-camera><a-cursor fuse="false"></a-cursor></a-camera>
       <a-assets>
         <img id="groundTexture" src="https://cdn.aframe.io/a-painter/images/floor.jpg" crossorigin="anonymous">
         <img id="skyTexture" src="https://cdn.aframe.io/a-painter/images/sky.jpg" crossorigin="anonymous">
+        <img id="face_down" src="images/face_down.png" crossorigin="anonymous">
+        <img id="face_limbo" src="images/face_limbo.png" crossorigin="anonymous">
+        <img id="face_lose" src="images/face_lose.png" crossorigin="anonymous">
+        <img id="face_up" src="images/face_up.png" crossorigin="anonymous">
+        <img id="face_win" src="images/face_win.png" crossorigin="anonymous">
+        <img id="face_down" src="images/face_down.png" crossorigin="anonymous">
+
+        <img id="flag" src="images/flag.png" crossorigin="anonymous">
+        <img id="mine_hit" src="images/mine_hit.png" crossorigin="anonymous">
+        <img id="mine_marked" src="images/mine_marked.png" crossorigin="anonymous">
+        <img id="mine" src="images/mine.png" crossorigin="anonymous">
+
+        <img id="hidden" src="images/hidden.png" crossorigin="anonymous">
+        <img id="tile1" src="images/tile_1.png" crossorigin="anonymous">
+        <img id="tile2" src="images/tile_2.png" crossorigin="anonymous">
+        <img id="tile3" src="images/tile_3.png" crossorigin="anonymous">
+        <img id="tile4" src="images/tile_4.png" crossorigin="anonymous">
+        <img id="tile5" src="images/tile_5.png" crossorigin="anonymous">
+        <img id="tile6" src="images/tile_6.png" crossorigin="anonymous">
+        <img id="tile7" src="images/tile_7.png" crossorigin="anonymous">
+        <img id="tile8" src="images/tile_8.png" crossorigin="anonymous">
       </a-assets>
 
       <!-- Primitives. -->
-      <a-box position="-1 0.6 -3" rotation="0 0 0" color="#4CC300" handle-events></a-box>
-      <a-box position="0 1.35 -5" s color="#EF2D5E" handle-events></a-box>
-      <a-box position="1 0.85 -3" radius="0.5" height="1.5" color="#FFC65D" handle-events></a-box>
+      <a-entity game-board position="0 0 -3" scale=".5 1 .5">
+        <a-box multisrc="src2:#face_up;" scale="1 .3 1" position="0 .15 0" color="grey"></a-box>
+        <a-entity minefield position="-0.5 0 1">
+          <a-box multisrc="src2:#hidden;" scale="1 .3 1" position="0 .15 0" color="grey" handle-events></a-box>
+          <a-box multisrc="src2:#hidden;" scale="1 .3 1" position="0 .15 1" color="grey" handle-events></a-box>
+          <a-box multisrc="src2:#hidden;" scale="1 .3 1" position="1 .15 0" color="grey" handle-events></a-box>
+          <a-box multisrc="src2:#hidden;" scale="1 .3 1" position="1 .15 1" color="grey" handle-events></a-box>
+        </a-entity>
+
+      </a-entity>
+      
+      
+      
       
       <!-- Background sky. -->
       <a-sky height="2048" radius="30" src="#skyTexture" theta-length="90" width="2048"></a-sky>
