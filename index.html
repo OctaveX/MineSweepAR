@@ -14,7 +14,7 @@
         overlayElement: #overlay;"
         inspector="url: https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js">
         
-      <a-camera><a-cursor fuse="false"></a-cursor></a-camera>
+      <a-camera><a-cursor></a-cursor></a-camera>
       <a-assets>
         <img id="groundTexture" src="https://cdn.aframe.io/a-painter/images/floor.jpg" crossorigin="anonymous">
         <img id="skyTexture" src="https://cdn.aframe.io/a-painter/images/sky.jpg" crossorigin="anonymous">
@@ -43,12 +43,10 @@
 
       <!-- Primitives. -->
       <a-entity game-board position="0 0 -3" scale=".5 1 .5">
-        <a-box multisrc="src2:#face_up;" scale="1 .3 1" position="0 .15 0" color="grey"></a-box>
-        <a-entity minefield position="-0.5 0 1">
-          <a-box multisrc="src2:#hidden;" scale="1 .3 1" position="0 .15 0" color="grey" handle-events></a-box>
-          <a-box multisrc="src2:#hidden;" scale="1 .3 1" position="0 .15 1" color="grey" handle-events></a-box>
-          <a-box multisrc="src2:#hidden;" scale="1 .3 1" position="1 .15 0" color="grey" handle-events></a-box>
-          <a-box multisrc="src2:#hidden;" scale="1 .3 1" position="1 .15 1" color="grey" handle-events></a-box>
+        <a-box id="smiley" multisrc="src2:#face_up;" scale="1 .3 1" position="0 .15 0" color="grey"></a-box>
+        <a-entity id="minefield" position="-4.5 0 1"> 
+          <!-- TODO: Figure out why the above can't be moved in JS
+            <a-box multisrc="src2:#hidden;" scale="1 .3 1" position="0 .15 0" color="grey" tile></a-box> -->
         </a-entity>
 
       </a-entity>
