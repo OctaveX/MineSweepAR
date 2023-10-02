@@ -2,8 +2,9 @@ var timeValue = 0;
 var remainingMines = 0;
 var interval;
 var minesLaid = false;
-let options = { columns: 10, rows: 10, mines: 10 };
+let options = { columns: 9, rows: 9, mines: 10 };
 var mineLocations = [];
+var difficultyIndex = 0;
 
 AFRAME.registerComponent('smiley', {
   schema: {
@@ -38,8 +39,8 @@ AFRAME.registerComponent('tile', {
       this.el.id = tileIndex;
 
       if(this.data.tileIndex >= 0){
-        el.object3D.position.x = this.data.tileIndex % options.columns;
-        el.object3D.position.z = Math.floor(this.data.tileIndex / options.rows);
+        el.object3D.position.x = this.data.tileIndex % options.rows;
+        el.object3D.position.z = Math.floor(this.data.tileIndex / options.columns);
       }
       
       el.addEventListener("auxclick", function(e) { e.preventDefault(); }); // Middle Click
@@ -60,16 +61,12 @@ AFRAME.registerComponent('tile', {
     let clickX = event.detail.mouseEvent ? event.detail.mouseEvent.x : event.detail.touchEvent.changedTouches[0].clientX 
     
     if(clickX > (window.innerWidth/2)){
-
-      console.log("RIGHT SIDE");
-      // Left Click
       let tileIndex = event.target.id;
       if (!minesLaid) {
         layMines(tileIndex);
       }
       revealTile(event.target);
     } else {
-      console.log("LEFT SIDE");
       toggleFlag(event.target);
   }
 }
@@ -89,44 +86,8 @@ function toggleFlag(element){
     element.setAttribute('multisrc', 'src2:#hidden');
     remainingMines++;
   }
-  //updateMineCount();
+  updateMineCount();
 }
-
-    // Middle Click
-    // else if (event.which === 2) {
-    //     //If the tile that is middle clicked has not been revealed, do nothing. 
-    //     //(This was a funny bug that would let you win the game by middle clicking a tile as the first click)
-    //     if (!event.target.classList.contains("revealed")) {
-    //         return;
-    //     }
-    //     //Check if the number of adjacent flags is the same as the number of adjacent mines
-    //     var adjacentTiles = getAdjacentTiles(parseInt(event.target.id));
-    //     var adjacentMineCount = 0;
-    //     var adjacentFlagCount = 0;
-    //     for (var i = 0; i < adjacentTiles.length; i++) {
-    //         if(document.getElementById(adjacentTiles[i]).classList.contains("flag")){
-    //             adjacentFlagCount++;
-    //         }
-    //         if (mineLocations.indexOf(adjacentTiles[i]) > -1) {
-    //             adjacentMineCount++;
-    //         }
-    //     }
-    //     if (adjacentFlagCount === adjacentMineCount) {
-    //         for (var i = 0; i < adjacentTiles.length; i++) {
-    //             revealTile(document.getElementById(adjacentTiles[i]));
-    //         }
-    //     }
-    // }
-
-    // Right Click, if not revealed apply flag
-    // else if (event.which === 3 && !event.target.classList.contains("revealed")) {
-    //     if (event.target.classList.toggle("flag")) {
-    //         remainingMines--;
-    //     } else {
-    //         remainingMines++;
-    //     }
-    //     updateMineCount();
-    // }
 
 function revealTile(clickedTile, adjacentCheck = false) {
   //Do nothing to flagged or revealed tiles
@@ -168,7 +129,7 @@ function revealTile(clickedTile, adjacentCheck = false) {
       clickedTile.setAttribute('multisrc', 'src2:#mine_hit');
       //document.getElementById("smiley").classList.add("face_lose");
 
-      //stopTimer();
+      stopTimer();
       //removeEventListenersFromTiles();
 
       var flags = document.getElementsByClassName("flag");
@@ -208,40 +169,43 @@ function revealTile(clickedTile, adjacentCheck = false) {
   if(mineLocations.length === document.getElementsByClassName("hidden").length){
       //Enter win state
       // document.getElementById("smiley").classList.add("face_win");
-      // stopTimer();
+      stopTimer();
       // removeEventListenersFromTiles();
 
   }
 
 }
 
-  
-  function resetGame() {
-    buildGrid();
+function resetGame() {
+  if(!minesLaid){
+    // setDifficulty(difficultyIndex);
+    // difficultyIndex = (difficultyIndex + 1) %3;
   }
+  buildGrid();
+}
 
 
-  function buildGrid() {
-    // Fetch grid and clear out old elements, reset title text
-    
-    //setDifficulty(options);
+function buildGrid() {
+  // Fetch grid and clear out old elements, reset title text
+  
+  //setDifficulty(options);
 
-    var grid = document.getElementById("minefield");
-    grid.innerHTML = "";
-    grid.object3D.position.x = 0.5 - (options.columns/2);//why doesn't this work?
+  var grid = document.getElementById("minefield");
+  grid.innerHTML = "";
+  grid.object3D.position.x = 0.5 - (options.columns/2);
 
-    //Reset mines
-    minesLaid = false;
-    mineLocations = [];
-    remainingMines = options.mines;
-    //updateMineCount();
+  //Reset mines
+  minesLaid = false;
+  mineLocations = [];
+  remainingMines = options.mines;
+  updateMineCount();
 
-    // Build DOM Grid
-    var tile;
-    for (var index = 0; index < options.columns * options.rows; index++) {
-        tile = createTile(index);
-        grid.appendChild(tile);
-    }
+  // Build DOM Grid
+  var tile;
+  for (var index = 0; index < options.columns * options.rows; index++) {
+      tile = createTile(index);
+      grid.appendChild(tile);
+  }
     
 }
 
@@ -296,4 +260,53 @@ function getAdjacentTiles(id) {
   adjacentTileArrayLocation.push(id + options.columns);
 
   return adjacentTileArrayLocation.filter(x => x >= minArray && x < maxArray);
+}
+
+
+/* Timer */
+function startTimer() {
+  interval = window.setInterval(onTimerTick, 1000);
+}
+
+function stopTimer(isReset) {
+  window.clearInterval(interval);
+  if (isReset) {
+      timeValue = 0;
+  }
+  updateTimer();
+}
+
+function onTimerTick() {
+  timeValue++;
+  updateTimer();
+}
+
+function updateTimer() {
+  document.getElementById("timer").innerHTML = timeValue;
+}
+
+/* Mine Count */
+function updateMineCount() {
+  document.getElementById("remainingMineCount").setAttribute('value', remainingMines);
+}
+
+function setDifficulty(difficulty) {
+  //Easy - 9x9 grid, 10 mines.
+  if (difficulty == 0) {
+      options.columns = 9;
+      options.rows = 9;
+      options.mines = 10;
+  }
+  //Medium - 16x16 grid, 40 mines.
+  else if (difficulty == 1) {
+      options.columns = 16;
+      options.rows = 16;
+      options.mines = 40;
+  }
+  //Hard - 30x16 grid, 99 mines.
+  else if (difficulty == 2) {
+      options.columns = 30;
+      options.rows = 16;
+      options.mines = 99;
+  }
 }
