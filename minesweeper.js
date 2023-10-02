@@ -2,17 +2,40 @@ var timeValue = 0;
 var remainingMines = 0;
 var interval;
 var minesLaid = false;
-let options = { columns: 10, rows: 10, mines: 1 };
+let options = { columns: 10, rows: 10, mines: 10 };
 var mineLocations = [];
+
+AFRAME.registerComponent('smiley', {
+  schema: {
+    
+  },
+  init: function () {
+    let el = this.el;  // <a-box>
+
+    el.addEventListener('mouseenter', function () {
+      el.setAttribute('color', 'lightgrey');  
+    });
+    el.addEventListener('mouseleave', function () {
+      el.setAttribute('color', 'grey');  
+    }); 
+
+    el.addEventListener('click', resetGame, true);
+
+    
+  },
+});
 
 AFRAME.registerComponent('tile', {
     schema: {
       tileIndex: {type: 'int', default: -1},
+      flagged: {type: 'bool', default: false},
+      revealed: {type: 'bool', default: false},
     },
     init: function () {
       let el = this.el;  // <a-box>
       let tileIndex = this.data.tileIndex
       
+      this.el.id = tileIndex;
 
       if(this.data.tileIndex >= 0){
         el.object3D.position.x = this.data.tileIndex % options.columns;
@@ -28,36 +51,46 @@ AFRAME.registerComponent('tile', {
       el.addEventListener('mouseleave', function () {
         el.setAttribute('color', 'grey');  
       });
-
-      //tile.addEventListener("mousedown", handleTileDown, true); // All Clicks
-      // tile.addEventListener("mouseover", handleTileDown, true);
-      // tile.addEventListener("mouseout", handleTileOut, true);
-      //el.addEventListener("mouseup", handleTileUp, true);
-
-      el.addEventListener('click', handleTileUp, true);
-        
-
-        // el.setAttribute('scale', {x: 1, y: .1, z: 1});
-        // el.object3D.position.y = .05;
-        // el.setAttribute('color', 'darkgrey');
-        // el.setAttribute('multisrc', 'src2:#tile1');
-      //});
-      
+      el.addEventListener('click', handleClick, true);      
     },
   });
-
-  function handleTileUp(event) {
-    //smiley.classList.remove("face_limbo");
-
-    // Left Click
-    let tileIndex = event.target.components.tile.data.tileIndex;
-    if (!minesLaid) {
-      console.log(tileIndex);
-      layMines(tileIndex);
-    }
-
-    revealTile(tileIndex);
+  
+  function handleClick(event) {
+    //Check the aframe event to see if the nested event is mouse or touch
+    let clickX = event.detail.mouseEvent ? event.detail.mouseEvent.x : event.detail.touchEvent.changedTouches[0].clientX 
     
+    if(clickX > (window.innerWidth/2)){
+
+      console.log("RIGHT SIDE");
+      // Left Click
+      let tileIndex = event.target.id;
+      if (!minesLaid) {
+        layMines(tileIndex);
+      }
+      revealTile(event.target);
+    } else {
+      console.log("LEFT SIDE");
+      toggleFlag(event.target);
+  }
+}
+
+function toggleFlag(element){
+  //If the tile has already been revealed do nothing
+  if(element.components.tile.data.revealed){
+    return;
+  }
+
+  if (!element.components.tile.data.flagged) {
+    element.setAttribute('tile', 'flagged:true');
+    element.setAttribute('multisrc', 'src2:#flag');
+    remainingMines--;
+  } else {
+    element.setAttribute('tile', 'flagged:false');
+    element.setAttribute('multisrc', 'src2:#hidden');
+    remainingMines++;
+  }
+  //updateMineCount();
+}
 
     // Middle Click
     // else if (event.which === 2) {
@@ -94,30 +127,49 @@ AFRAME.registerComponent('tile', {
     //     }
     //     updateMineCount();
     // }
-}
 
-function revealTile(clickedTile) {
+function revealTile(clickedTile, adjacentCheck = false) {
   //Do nothing to flagged or revealed tiles
-  console.log(clickedTile);
-  if (clickedTile.classList.contains("flag") || clickedTile.classList.contains("revealed")) {
-      return;
+  if (clickedTile.components.tile.data.flagged) {
+    return;
   }
+  if (clickedTile.components.tile.data.revealed && adjacentCheck == false) {
+    //Check if the number of adjacent flags is the same as the number of adjacent mines
+    var adjacentTiles = getAdjacentTiles(parseInt(clickedTile.id));
+    var adjacentMineCount = 0;
+    var adjacentFlagCount = 0;
+    for (var i = 0; i < adjacentTiles.length; i++) {
+        if(document.getElementById(adjacentTiles[i]).components.tile.data.flagged){
+            adjacentFlagCount++;
+        }
+        if (mineLocations.indexOf(adjacentTiles[i]) > -1) {
+            adjacentMineCount++;
+        }
+    }
+    if (adjacentMineCount > 0 && adjacentFlagCount === adjacentMineCount) {
+        for (var i = 0; i < adjacentTiles.length; i++) {
+          let adjacentTile = document.getElementById(adjacentTiles[i]);
+          if(!adjacentTile.components.tile.data.revealed){ 
+            revealTile(adjacentTile, true);
+          }
+        }
+    }
+    return;
+  }
+
   //Mark this tile as revealed
-  clickedTile.classList.add("revealed");
-  clickedTile.classList.remove("hidden");
+  clickedTile.setAttribute('multisrc', 'src2:#clear');
+  clickedTile.setAttribute('tile', 'revealed:true');
+
   
   //Check if the clicked tile was a mine
   if (mineLocations.indexOf(parseInt(clickedTile.id)) > -1) {
       //Enter lose state
-      clickedTile.classList.add("mine_hit");
-      document.getElementById("smiley").classList.add("face_lose");
+      clickedTile.setAttribute('multisrc', 'src2:#mine_hit');
+      //document.getElementById("smiley").classList.add("face_lose");
 
-      stopTimer();
-      removeEventListenersFromTiles();
-
-      var titleText = document.getElementById("titleMessage");
-      titleText.innerHTML = "You Lose.";
-      titleText.classList.add("lose_text");
+      //stopTimer();
+      //removeEventListenersFromTiles();
 
       var flags = document.getElementsByClassName("flag");
 
@@ -128,7 +180,7 @@ function revealTile(clickedTile) {
       }
       for (var i = 0; i < mineLocations.length; i++) {
           if (!document.getElementById(mineLocations[i]).classList.contains("flag")) {
-              document.getElementById(mineLocations[i]).classList.add("mine");
+              document.getElementById(mineLocations[i]).setAttribute('multisrc', 'src2:#mine');
           }
       }
       return;
@@ -145,7 +197,7 @@ function revealTile(clickedTile) {
 
   //Number tiles for mine if none reveal adjacent tiles
   if (adjacentMineCount > 0) {
-      clickedTile.classList.add("tile_" + adjacentMineCount);
+      clickedTile.setAttribute('multisrc', 'src2:#tile' + adjacentMineCount);
   } else {
       for (var i = 0; i < adjacentTiles.length; i++) {
           revealTile(document.getElementById(adjacentTiles[i]));
@@ -155,20 +207,18 @@ function revealTile(clickedTile) {
   //Check if the number of hidden tiles remaining == number of mines
   if(mineLocations.length === document.getElementsByClassName("hidden").length){
       //Enter win state
-      document.getElementById("smiley").classList.add("face_win");
-      stopTimer();
-      removeEventListenersFromTiles();
+      // document.getElementById("smiley").classList.add("face_win");
+      // stopTimer();
+      // removeEventListenersFromTiles();
 
-      var titleText = document.getElementById("titleMessage");
-      titleText.innerHTML = "You Win!!!";
-      titleText.classList.add("win_text");
   }
 
 }
 
   
-
-  buildGrid();
+  function resetGame() {
+    buildGrid();
+  }
 
 
   function buildGrid() {
