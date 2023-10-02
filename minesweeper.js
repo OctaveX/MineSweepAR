@@ -127,7 +127,7 @@ function revealTile(clickedTile, adjacentCheck = false) {
   if (mineLocations.indexOf(parseInt(clickedTile.id)) > -1) {
       //Enter lose state
       clickedTile.setAttribute('multisrc', 'src2:#mine_hit');
-      //document.getElementById("smiley").classList.add("face_lose");
+      document.getElementById("smiley").setAttribute('multisrc', 'src2:#face_lose');
 
       stopTimer();
       //removeEventListenersFromTiles();
@@ -168,7 +168,7 @@ function revealTile(clickedTile, adjacentCheck = false) {
   //Check if the number of hidden tiles remaining == number of mines
   if(mineLocations.length === document.getElementsByClassName("hidden").length){
       //Enter win state
-      // document.getElementById("smiley").classList.add("face_win");
+      document.getElementById("smiley").setAttribute('multisrc', 'src2:#face_win');
       stopTimer();
       // removeEventListenersFromTiles();
 
@@ -181,6 +181,8 @@ function resetGame() {
     // setDifficulty(difficultyIndex);
     // difficultyIndex = (difficultyIndex + 1) %3;
   }
+
+  document.getElementById("smiley").setAttribute('multisrc', 'src2:#face_up');
   buildGrid();
 }
 
