@@ -39,7 +39,7 @@ AFRAME.registerComponent('tile', {
       this.el.id = tileIndex;
 
       if(this.data.tileIndex >= 0){
-        el.object3D.position.x = this.data.tileIndex % options.rows;
+        el.object3D.position.x = this.data.tileIndex % options.columns;
         el.object3D.position.z = Math.floor(this.data.tileIndex / options.columns);
       }
       
@@ -171,15 +171,14 @@ function revealTile(clickedTile, adjacentCheck = false) {
       document.getElementById("smiley").setAttribute('multisrc', 'src2:#face_win');
       stopTimer();
       // removeEventListenersFromTiles();
-
   }
 
 }
 
 function resetGame() {
   if(!minesLaid){
-    // setDifficulty(difficultyIndex);
-    // difficultyIndex = (difficultyIndex + 1) %3;
+    setDifficulty(difficultyIndex);
+    difficultyIndex = (difficultyIndex + 1) %3;
   }
 
   document.getElementById("smiley").setAttribute('multisrc', 'src2:#face_up');
@@ -284,7 +283,7 @@ function onTimerTick() {
 }
 
 function updateTimer() {
-  document.getElementById("timer").innerHTML = timeValue;
+  document.getElementById("timer").setAttribute('value', timeValue);
 }
 
 /* Mine Count */
@@ -295,20 +294,23 @@ function updateMineCount() {
 function setDifficulty(difficulty) {
   //Easy - 9x9 grid, 10 mines.
   if (difficulty == 0) {
-      options.columns = 9;
-      options.rows = 9;
-      options.mines = 10;
+    document.getElementById("difficultyName").setAttribute('value', "Easy");
+    options.columns = 9;
+    options.rows = 9;
+    options.mines = 10;
   }
   //Medium - 16x16 grid, 40 mines.
   else if (difficulty == 1) {
-      options.columns = 16;
-      options.rows = 16;
-      options.mines = 40;
+    document.getElementById("difficultyName").setAttribute('value', "Medium");
+    options.columns = 16;
+    options.rows = 16;
+    options.mines = 40;
   }
   //Hard - 30x16 grid, 99 mines.
   else if (difficulty == 2) {
-      options.columns = 30;
-      options.rows = 16;
-      options.mines = 99;
+    document.getElementById("difficultyName").setAttribute('value', "Hard");
+    options.columns = 30;
+    options.rows = 16;
+    options.mines = 99;
   }
 }
