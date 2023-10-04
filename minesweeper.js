@@ -21,8 +21,6 @@ AFRAME.registerComponent('smiley', {
     }); 
 
     el.addEventListener('click', resetGame, true);
-
-    
   },
 });
 
@@ -138,9 +136,8 @@ function revealTile(clickedTile, adjacentCheck = false) {
       document.getElementById("smiley").setAttribute('multisrc', 'src2:#face_lose');
 
       stopTimer();
-      //removeEventListenersFromTiles();
 
-      var flags = document.getElementsByClassName("flag");
+      var flags = document.getElementsByClassName("flag");//TODO: Fix this
 
       for (var i = 0; i < flags.length; i++) {
           if (mineLocations.indexOf(parseInt(flags[i].id)) === -1) {
@@ -174,11 +171,10 @@ function revealTile(clickedTile, adjacentCheck = false) {
   }
 
   //Check if the number of hidden tiles remaining == number of mines
-  if(mineLocations.length === document.getElementsByClassName("hidden").length){
+  if(mineLocations.length === document.getElementsByClassName("hidden").length){ //TODO: Fix this
       //Enter win state
       document.getElementById("smiley").setAttribute('multisrc', 'src2:#face_win');
       stopTimer();
-      // removeEventListenersFromTiles();
   }
 
 }
@@ -196,10 +192,7 @@ function resetGame() {
 
 function buildGrid() {
   // Fetch grid and clear out old elements, reset title text
-  
-  //setDifficulty(options);
-
-  var grid = document.getElementById("minefield");
+    var grid = document.getElementById("minefield");
   grid.object3D.clear();
   grid.innerHTML = '';
   grid.object3D.position.x = 0.5 - (options.columns/2);
@@ -322,8 +315,4 @@ function setDifficulty(difficulty) {
     options.rows = 16;
     options.mines = 99;
   }
-}
-
-function removeEventListenersFromTiles(){
-  document.getElementById
 }
