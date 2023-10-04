@@ -35,25 +35,33 @@ AFRAME.registerComponent('tile', {
     init: function () {
       let el = this.el;  // <a-box>
       let tileIndex = this.data.tileIndex
-      
+
       this.el.id = tileIndex;
 
       if(this.data.tileIndex >= 0){
         el.object3D.position.x = this.data.tileIndex % options.columns;
         el.object3D.position.z = Math.floor(this.data.tileIndex / options.columns);
       }
-      
-      el.addEventListener("auxclick", function(e) { e.preventDefault(); }); // Middle Click
-      el.addEventListener("contextmenu", function (e) { e.preventDefault(); }); // Right Click
 
-      el.addEventListener('mouseenter', function () {
+      this.handleMouseEnter = function() {
         el.setAttribute('color', 'lightgrey');  
-      });
-      el.addEventListener('mouseleave', function () {
+      }
+      el.addEventListener('mouseenter', this.handleMouseEnter);
+
+      this.handleMouseLeave = function () {
         el.setAttribute('color', 'grey');  
-      });
-      el.addEventListener('click', handleClick, true);      
+      };
+      el.addEventListener('mouseleave', this.handleMouseLeave);
+
+      this.handleClick = function(event) {handleClick(event);};
+      el.addEventListener('click', this.handleClick , true);      
     },
+    remove: function() {
+      let el = this.el;  // <a-box>
+      el.removeEventListener('click', this.handleClick);
+      el.removeEventListener('mouseenter', this.handleMouseEnter);
+      el.removeEventListener('mouseleave', this.handleMouseLeave);
+    }
   });
   
   function handleClick(event) {
@@ -136,11 +144,11 @@ function revealTile(clickedTile, adjacentCheck = false) {
 
       for (var i = 0; i < flags.length; i++) {
           if (mineLocations.indexOf(parseInt(flags[i].id)) === -1) {
-              flags[i].classList.add("mine_marked")
+              flags[i].setAttribute('multisrc', 'src2:#mine_marked');
           }
       }
       for (var i = 0; i < mineLocations.length; i++) {
-          if (!document.getElementById(mineLocations[i]).classList.contains("flag")) {
+          if (!document.getElementById(mineLocations[i]).components.tile.data.flagged) {
               document.getElementById(mineLocations[i]).setAttribute('multisrc', 'src2:#mine');
           }
       }
@@ -193,6 +201,7 @@ function buildGrid() {
 
   var grid = document.getElementById("minefield");
   grid.object3D.clear();
+  grid.innerHTML = '';
   grid.object3D.position.x = 0.5 - (options.columns/2);
 
   //Reset mines
@@ -215,8 +224,8 @@ function createTile(index){
   element.setAttribute('tile', {tileIndex: index});
   element.setAttribute('multisrc', 'src2:#hidden;');
   element.object3D.position.y = 0.15;
-  element.setAttribute('color', 'grey');  
   element.object3D.scale.set(1, .3, 1);
+  element.setAttribute('color', 'grey');  
   return element;
 }
 
@@ -313,4 +322,8 @@ function setDifficulty(difficulty) {
     options.rows = 16;
     options.mines = 99;
   }
+}
+
+function removeEventListenersFromTiles(){
+  document.getElementById
 }
