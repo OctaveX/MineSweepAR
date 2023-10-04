@@ -178,7 +178,7 @@ function revealTile(clickedTile, adjacentCheck = false) {
 function resetGame() {
   if(!minesLaid){
     setDifficulty(difficultyIndex);
-    difficultyIndex = (difficultyIndex + 1) %3;
+    difficultyIndex = (difficultyIndex + 1) % 3;
   }
 
   document.getElementById("smiley").setAttribute('multisrc', 'src2:#face_up');
@@ -192,7 +192,7 @@ function buildGrid() {
   //setDifficulty(options);
 
   var grid = document.getElementById("minefield");
-  grid.innerHTML = "";
+  grid.object3D.clear();
   grid.object3D.position.x = 0.5 - (options.columns/2);
 
   //Reset mines
