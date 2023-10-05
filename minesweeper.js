@@ -40,6 +40,7 @@ AFRAME.registerComponent('tile', {
         el.object3D.position.x = this.data.tileIndex % options.columns;
         el.object3D.position.z = Math.floor(this.data.tileIndex / options.columns);
       }
+      el.classList.add("hidden");
 
       this.handleMouseEnter = function() {
         el.setAttribute('color', 'lightgrey');  
@@ -86,10 +87,12 @@ function toggleFlag(element){
   if (!element.components.tile.data.flagged) {
     element.setAttribute('tile', 'flagged:true');
     element.setAttribute('multisrc', 'src2:#flag');
+    element.classList.add('flag');
     remainingMines--;
   } else {
     element.setAttribute('tile', 'flagged:false');
     element.setAttribute('multisrc', 'src2:#hidden');
+    element.classList.remove('flag');
     remainingMines++;
   }
   updateMineCount();
@@ -127,6 +130,7 @@ function revealTile(clickedTile, adjacentCheck = false) {
   //Mark this tile as revealed
   clickedTile.setAttribute('multisrc', 'src2:#clear');
   clickedTile.setAttribute('tile', 'revealed:true');
+  clickedTile.classList.remove('hidden');
 
   
   //Check if the clicked tile was a mine
@@ -137,7 +141,7 @@ function revealTile(clickedTile, adjacentCheck = false) {
 
       stopTimer();
 
-      var flags = document.getElementsByClassName("flag");//TODO: Fix this
+      var flags = document.getElementsByClassName("flag");
 
       for (var i = 0; i < flags.length; i++) {
           if (mineLocations.indexOf(parseInt(flags[i].id)) === -1) {
