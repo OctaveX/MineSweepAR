@@ -52,7 +52,7 @@ AFRAME.registerComponent('tile', {
       };
       el.addEventListener('mouseleave', this.handleMouseLeave);
 
-      this.handleClick = function(event) {handleClick(event); console.log(event);};
+      this.handleClick = function(event) {handleClick(event);};
 
       el.addEventListener('click', this.handleClick , true);      
     },
