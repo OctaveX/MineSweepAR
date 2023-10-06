@@ -52,7 +52,8 @@ AFRAME.registerComponent('tile', {
       };
       el.addEventListener('mouseleave', this.handleMouseLeave);
 
-      this.handleClick = function(event) {handleClick(event);};
+      this.handleClick = function(event) {handleClick(event); console.log(event);};
+
       el.addEventListener('click', this.handleClick , true);      
     },
     remove: function() {
@@ -192,6 +193,7 @@ function resetGame() {
 
   document.getElementById("smiley").setAttribute('multisrc', 'src2:#face_up');
   buildGrid();
+  stopTimer(true);
 }
 
 
