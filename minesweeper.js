@@ -71,6 +71,7 @@ AFRAME.registerComponent('tile', {
       let tileIndex = event.target.id;
       if (!minesLaid) {
         layMines(tileIndex);
+        startTimer();
       }
       revealTile(event.target);
     } else {
@@ -289,7 +290,7 @@ function onTimerTick() {
 }
 
 function updateTimer() {
-  document.getElementById("timer").setAttribute('value', timeValue);
+  document.getElementById("timer").setAttribute('value', timeValue.toString().padStart(3, "0"));
 }
 
 /* Mine Count */
