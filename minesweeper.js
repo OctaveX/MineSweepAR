@@ -70,6 +70,7 @@ AFRAME.registerComponent('tile', {
         el.object3D.position.z = Math.floor(this.data.tileIndex / options.columns);
       }
       el.classList.add("hidden");
+      el.classList.add("clickable");
 
       this.handleMouseEnter = function() {
         el.setAttribute('color', 'lightgrey');  
@@ -95,9 +96,6 @@ AFRAME.registerComponent('tile', {
   
   function handleClick(event) {
     //Check the aframe event to see if the nested event is mouse or touch
-    let clickX = event.detail.mouseEvent ? event.detail.mouseEvent.x : event.detail.touchEvent.changedTouches[0].clientX 
-    
-    //if(clickX > (window.innerWidth/2)){
     if(gazeControl === 'reveal'){
       let tileIndex = event.target.id;
       if (!minesLaid) {
@@ -105,7 +103,7 @@ AFRAME.registerComponent('tile', {
         startTimer();
       }
       revealTile(event.target);
-    } else {
+    } else if (gazeControl === 'flag'){
       toggleFlag(event.target);
   }
 }

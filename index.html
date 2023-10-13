@@ -9,9 +9,8 @@
     <script type="module"  src="minesweeper.js"></script>
   </head>
   <body>
-    <a-scene webxr="requiredFeatures: hit-test,local-floor;
-        optionalFeatures: dom-overlay,unbounded;
-        overlayElement: #overlay;"
+    <a-scene mousedisabler webxr="requiredFeatures: hit-test,local-floor;"
+        cursor__xrselect="rayOrigin: xrselect"
         inspector="url: https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js">
       <a-assets>
         <img id="groundTexture" src="https://cdn.aframe.io/a-painter/images/floor.jpg" crossorigin="anonymous">
@@ -39,9 +38,10 @@
         <img id="tile7" src="images/tile_7.png" crossorigin="anonymous">
         <img id="tile8" src="images/tile_8.png" crossorigin="anonymous">
       </a-assets>
-        
+      <a-entity laser-controls="hand: left" raycaster="objects: .clickable"></a-entity>
+      <a-entity laser-controls="hand: right" raycaster="objects: .clickable"></a-entity>
+
       <a-camera>
-        <a-cursor fuse="false"></a-cursor>
         <a-entity id="hud" position="0 0 -0.5" opacity=".6" scale=".3 .3 .3" align="center">
           <a-text id="remainingMineCount" value="--" font="fonts/7Segment-msdf.json" color="red" negate="false" position="-.05 1 0" align="right"></a-text>
           <a-text value=" | " font="fonts/7Segment-msdf.json" color="red" negate="false" position="0 1 0" align="center"></a-text>
@@ -49,14 +49,11 @@
         </a-entity>
       </a-camera> 
       
-      <a-entity id="leftHand" hand-tracking-controls="hand: left;"></a-entity>
-      <a-entity id="rightHand" hand-tracking-controls="hand: right;"></a-entity>
-
       <!-- Primitives. -->
       <a-entity game-board position="0 0 -3" scale=".2 .5 .2">
-        <a-box id="smiley" smiley multisrc="src2:#face_up;" scale="1 .3 1" position="0 .15 0" color="grey"></a-box>
+        <a-box id="smiley" smiley multisrc="src2:#face_up;" scale="1 .3 1" position="0 .15 0" color="grey" class="clickable"></a-box>
 
-        <a-box id="gazecontrolchanger" gazecontrolchanger multisrc="src2:#mine;" scale="1 .3 1" position="2 .15 0" color="grey"></a-box>
+        <a-box id="gazecontrolchanger" gazecontrolchanger multisrc="src2:#mine;" scale="1 .3 1" position="2 .15 0" color="grey" class="clickable"></a-box>
 
         <a-box scale="2 .3 1" position="-2 .15 0" color="#6D6D6D">
           <a-text id="difficultyName" value="Easy" rotation="-90 0 0" position="0 .5 0" align="center"></a-text>
