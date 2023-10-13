@@ -5,6 +5,35 @@ var minesLaid = false;
 let options = { columns: 9, rows: 9, mines: 10 };
 var mineLocations = [];
 var difficultyIndex = 0;
+var gazeControl = 'reveal';
+
+AFRAME.registerComponent('gazecontrolchanger', {
+  schema: {
+    
+  },
+  init: function () {
+    let el = this.el;  // <a-box>
+
+    el.addEventListener('mouseenter', function () {
+      el.setAttribute('color', 'lightgrey');  
+    });
+    el.addEventListener('mouseleave', function () {
+      el.setAttribute('color', 'grey');  
+    });
+
+
+    this.toggleControl = function() {
+      if(gazeControl === 'reveal'){
+        el.setAttribute('multisrc', 'src2:#flag');  
+        gazeControl = 'flag';
+      } else if (gazeControl === 'flag'){
+        el.setAttribute('multisrc', 'src2:#mine'); 
+        gazeControl = 'reveal';
+      }
+    };
+    el.addEventListener('click', this.toggleControl, true);
+  },
+});
 
 AFRAME.registerComponent('smiley', {
   schema: {
@@ -68,7 +97,8 @@ AFRAME.registerComponent('tile', {
     //Check the aframe event to see if the nested event is mouse or touch
     let clickX = event.detail.mouseEvent ? event.detail.mouseEvent.x : event.detail.touchEvent.changedTouches[0].clientX 
     
-    if(clickX > (window.innerWidth/2)){
+    //if(clickX > (window.innerWidth/2)){
+    if(gazeControl === 'reveal'){
       let tileIndex = event.target.id;
       if (!minesLaid) {
         layMines(tileIndex);
