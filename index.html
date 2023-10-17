@@ -9,8 +9,8 @@
     <script type="module"  src="minesweeper.js"></script>
   </head>
   <body>
-    <a-scene mousedisabler webxr="requiredFeatures: hit-test,local-floor;"
-        cursor__xrselect="rayOrigin: xrselect"
+    <a-scene cursorchanger webxr="requiredFeatures: hit-test,local-floor;"
+        cursor="rayOrigin: mouse"
         inspector="url: https://cdn.jsdelivr.net/gh/aframevr/aframe-inspector@master/dist/aframe-inspector.min.js">
       <a-assets>
         <img id="groundTexture" src="https://cdn.aframe.io/a-painter/images/floor.jpg" crossorigin="anonymous">

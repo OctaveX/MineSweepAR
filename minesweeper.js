@@ -7,6 +7,25 @@ var mineLocations = [];
 var difficultyIndex = 0;
 var gazeControl = 'reveal';
 
+AFRAME.registerComponent('cursorchanger', {
+  schema: {
+    
+  },
+  init: function () {
+    let el = this.el;  // <a-box>
+
+    this.xrCursor = function() {
+      el.setAttribute('cursor', 'rayOrigin: xrselect');
+    };
+    el.addEventListener('enter-vr', this.xrCursor, true);
+
+    this.mouseCursor = function() {
+      el.setAttribute('cursor', 'rayOrigin: mouse');
+    };
+    el.addEventListener('exit-vr', this.mouseCursor, true);
+  },
+});
+
 AFRAME.registerComponent('gazecontrolchanger', {
   schema: {
     
