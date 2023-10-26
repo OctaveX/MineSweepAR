@@ -58,7 +58,8 @@ window.addEventListener("DOMContentLoaded", function() {
         function() {
           // Object placed for the first time
           message.textContent = "Well done!";
-          document.getElementById('scene').removeAttribute('ar-cursor');
+          document.getElementById('scene').remove('ar-cursor');
+          document.getElementById('scene').remove('ar-hit-test');
         },
         { once: true }
       );
@@ -79,12 +80,14 @@ AFRAME.registerComponent('cursorchanger', {
   init: function () {
     let el = this.el;  // <a-box>
 
-    this.xrCursor = function() {
+    this.removeMouseCursor = function() {
       el.removeAttribute('cursor');
+      el.setAttribute('cursor', 'rayOrigin: xrselect');
     };
-    el.addEventListener('enter-vr', this.xrCursor, true);
+    el.addEventListener('enter-vr', this.removeMouseCursor, true);
 
     this.mouseCursor = function() {
+      el.removeAttribute('cursor');
       el.setAttribute('cursor', 'rayOrigin: mouse');
     };
     el.addEventListener('exit-vr', this.mouseCursor, true);
