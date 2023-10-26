@@ -58,8 +58,8 @@ window.addEventListener("DOMContentLoaded", function() {
         function() {
           // Object placed for the first time
           message.textContent = "Well done!";
-          document.getElementById('scene').remove('ar-cursor');
-          document.getElementById('scene').remove('ar-hit-test');
+          document.getElementById('scene').removeAttribute('ar-cursor');
+          document.getElementById('scene').removeAttribute('ar-hit-test');
         },
         { once: true }
       );
@@ -69,6 +69,7 @@ window.addEventListener("DOMContentLoaded", function() {
   sceneEl.addEventListener("exit-vr", function() {
     message.textContent = "Exited Immersive Mode";
     document.getElementById('scene').setAttribute('ar-cursor');
+    document.getElementById('scene').setAttribute('ar-hit-test', "target:#gameboard;type:footprint;footprintDepth:0.2;");
   });
 });
 
