@@ -11,8 +11,6 @@
     <script src="https://aframe.io/releases/1.4.0/aframe.js"></script>
     <script src="https://cdn.rawgit.com/elbobo/aframe-multisrc-component/b6d23310/dist/0.3/aframe-multisrc-component.js"></script>
     <script type="module"  src="minesweeper.js"></script>
-    
-    <script src="ar-helpers/ar-cursor.js"></script>
   </head>
   <body>
     <a-scene 
@@ -20,7 +18,7 @@
         cursorchanger 
         webxr="requiredFeatures: hit-test,local-floor; overlayElement:#dom-overlay;"
         ar-hit-test="target:#gameboard;type:footprint;footprintDepth:0.2;"
-        ar-cursor
+        
         cursor="rayOrigin: mouse"
         raycaster="objects: #gameboard *">
       <a-assets>
